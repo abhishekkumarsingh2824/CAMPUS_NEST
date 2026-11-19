@@ -1,0 +1,56 @@
+{% load static %}
+<div class="cn-property-card h-100">
+  <div class="cn-card-image-wrap">
+    {% if prop.images %}
+    <img src="{{ MEDIA_URL }}{{ prop.images.0 }}" alt="{{ prop.title }}" loading="lazy">
+    {% else %}
+    <div class="cn-no-image">
+      <i class="bi bi-house-fill" style="font-size:3rem;margin-bottom:.5rem;"></i>
+      <small>No image</small>
+    </div>
+    {% endif %}
+    <span class="cn-card-type-badge">{{ prop.room_type }}</span>
+    <span class="cn-card-avail-badge {% if prop.availability_status %}avail-yes{% else %}avail-no{% endif %}">
+      {% if prop.availability_status %}Available{% else %}Occupied{% endif %}
+    </span>
+  </div>
+  <div class="cn-card-body">
+    <h3 class="cn-card-title">{{ prop.title|truncatechars:60 }}</h3>
+    <p class="cn-card-location">
+      <i class="bi bi-geo-alt-fill text-primary me-1"></i>
+      {{ prop.locality }}{% if prop.locality and prop.city %}, {% endif %}{{ prop.city }}
+    </p>
+    {% if prop.nearby_college %}
+    <p class="cn-card-location mb-1">
+      <i class="bi bi-mortarboard-fill text-primary me-1"></i>Near {{ prop.nearby_college|truncatechars:35 }}
+    </p>
+    {% endif %}
+    <div class="d-flex align-items-baseline gap-2 mt-2">
+      <span class="cn-card-price">₹{{ prop.monthly_rent|floatformat:"0" }}<span>/month</span></span>
+    </div>
+    {% if prop.amenities %}
+    <div class="cn-card-amenities">
+      {% for am in prop.amenities|slice:":4" %}
+      <span class="cn-amenity-tag"><i class="bi bi-check2 me-1"></i>{{ am }}</span>
+      {% endfor %}
+      {% if prop.amenities|length > 4 %}
+      <span class="cn-amenity-tag">+{{ prop.amenities|length|add:"-4" }} more</span>
+      {% endif %}
+    </div>
+    {% endif %}
+    <div class="cn-card-footer d-flex align-items-center justify-content-between">
+      <a href="{% url 'properties:property_detail' property_id=prop.id %}"
+         class="btn btn-primary btn-sm">
+        <i class="bi bi-eye me-1"></i>View Details
+      </a>
+      {% if is_student %}
+      <form method="POST" action="{% url 'favorites:toggle' property_id=prop.id %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-sm btn-outline-danger" title="Save to Favorites">
+          <i class="bi bi-heart"></i>
+        </button>
+      </form>
+      {% endif %}
+    </div>
+  </div>
+</div>

@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Add Property — CampusNest{% endblock %}
+
+{% block content %}
+<div class="cn-page-header">
+  <div class="container">
+    <h1><i class="bi bi-plus-circle me-2"></i>List Your Property</h1>
+    <p>Fill in the details below. Your listing will be reviewed before going live.</p>
+  </div>
+</div>
+
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="cn-info-card">
+        <form method="POST" enctype="multipart/form-data" novalidate>
+          {% csrf_token %}
+
+          <h5 class="fw-bold mb-4 pb-2 border-bottom text-primary"><i class="bi bi-info-circle me-2"></i>Basic Information</h5>
+          <div class="row g-3 mb-4">
+            <div class="col-12">
+              <label class="form-label">Property Title *</label>
+              <input type="text" name="title" class="form-control" value="{{ form_data.title|default:'' }}" required placeholder="e.g. Spacious Single Room Near IIT Bombay">
+            </div>
+            <div class="col-12">
+              <label class="form-label">Description</label>
+              <textarea name="description" class="form-control" rows="4" placeholder="Describe your property, rules, nearby landmarks...">{{ form_data.description|default:'' }}</textarea>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Room Type *</label>
+              <select name="room_type" class="form-select" required>
+                <option value="">Select Type</option>
+                {% for rt in room_types %}
+                <option value="{{ rt }}" {% if form_data.room_type == rt %}selected{% endif %}>{{ rt }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Occupancy</label>
+              <select name="occupancy" class="form-select">
+                <option value="">Select</option>
+                <option value="1 Person">1 Person</option>
+                <option value="2 Persons">2 Persons</option>
+                <option value="3+ Persons">3+ Persons</option>
+              </select>
+            </div>
+          </div>
+
+          <h5 class="fw-bold mb-4 pb-2 border-bottom text-primary"><i class="bi bi-geo-alt me-2"></i>Location Details</h5>
+          <div class="row g-3 mb-4">
+            <div class="col-md-6">
+              <label class="form-label">City *</label>
+              <input type="text" name="city" class="form-control" value="{{ form_data.city|default:'' }}" required placeholder="e.g. Mumbai">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Locality / Area</label>
+              <input type="text" name="locality" class="form-control" value="{{ form_data.locality|default:'' }}" placeholder="e.g. Powai">
+            </div>
+            <div class="col-12">
+              <label class="form-label">Full Address *</label>
+              <textarea name="address" class="form-control" rows="2" required>{{ form_data.address|default:'' }}</textarea>
+            </div>
+            <div class="col-12">
+              <label class="form-label">Nearby College / University</label>
+              <input type="text" name="nearby_college" class="form-control" value="{{ form_data.nearby_college|default:'' }}" placeholder="e.g. IIT Bombay, BITS Pilani...">
+            </div>
+          </div>
+
+          <h5 class="fw-bold mb-4 pb-2 border-bottom text-primary"><i class="bi bi-currency-rupee me-2"></i>Pricing</h5>
+          <div class="row g-3 mb-4">
+            <div class="col-md-6">
+              <label class="form-label">Monthly Rent (₹) *</label>
+              <input type="number" name="monthly_rent" class="form-control" value="{{ form_data.monthly_rent|default:'' }}" required min="100" placeholder="e.g. 8000">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Security Deposit (₹)</label>
+              <input type="number" name="security_deposit" class="form-control" value="{{ form_data.security_deposit|default:'' }}" min="0" placeholder="e.g. 16000">
+            </div>
+          </div>
+
+          <h5 class="fw-bold mb-4 pb-2 border-bottom text-primary"><i class="bi bi-check2-circle me-2"></i>Amenities</h5>
+          <div class="row g-2 mb-4">
+            {% for am in amenity_list %}
+            <div class="col-6 col-md-4">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="amenities" value="{{ am }}" id="am_{{ forloop.counter }}"
+                       {% if am in form_data.amenities %}checked{% endif %}>
+                <label class="form-check-label" style="font-weight:400;" for="am_{{ forloop.counter }}">{{ am }}</label>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+
+          <h5 class="fw-bold mb-4 pb-2 border-bottom text-primary"><i class="bi bi-images me-2"></i>Property Images</h5>
+          <div class="mb-4">
+            <label class="form-label">Upload Photos (Max 6, each up to 5MB)</label>
+            <input type="file" name="images" class="form-control" multiple accept="image/*" id="imageUpload">
+            <div class="form-text">Supported formats: JPG, JPEG, PNG, WEBP. First image will be the thumbnail.</div>
+            <div id="imagePreview" class="d-flex gap-2 flex-wrap mt-2"></div>
+          </div>
+
+          <div class="d-flex gap-3">
+            <button type="submit" class="btn btn-primary btn-lg px-4">
+              <i class="bi bi-send me-2"></i>Submit for Review
+            </button>
+            <a href="{% url 'accounts:owner_dashboard' %}" class="btn btn-outline-secondary btn-lg">Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.getElementById('imageUpload').addEventListener('change', function() {
+  const preview = document.getElementById('imagePreview');
+  preview.innerHTML = '';
+  Array.from(this.files).slice(0,6).forEach(file => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const img = document.createElement('img');
+      img.src = e.target.result;
+      img.style.cssText = 'width:80px;height:60px;object-fit:cover;border-radius:8px;border:2px solid #BFDBFE;';
+      preview.appendChild(img);
+    };
+    reader.readAsDataURL(file);
+  });
+});
+</script>
+{% endblock %}

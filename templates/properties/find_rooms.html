@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Find Rooms — CampusNest{% endblock %}
+{% block meta_description %}Search and filter student rooms, PGs, hostels, and shared accommodations near colleges across India.{% endblock %}
+
+{% block content %}
+<div class="cn-page-header">
+  <div class="container">
+    <h1><i class="bi bi-search me-2"></i>Find Rooms</h1>
+    <p>{{ total }} propert{% if total == 1 %}y{% else %}ies{% endif %} found</p>
+  </div>
+</div>
+
+<div class="container py-4">
+  <div class="row g-4">
+    <!-- FILTER SIDEBAR -->
+    <div class="col-lg-3">
+      <div class="cn-filter-card" id="filterCard">
+        <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
+          <h5 class="cn-filter-title mb-0"><i class="bi bi-funnel-fill me-2 text-primary"></i>Filters</h5>
+          <a href="{% url 'properties:find_rooms' %}" class="btn btn-sm btn-outline-secondary py-0 px-2 text-decoration-none">Reset</a>
+        </div>
+        <form method="GET" id="filterForm">
+          <!-- Search -->
+          <div class="mb-3">
+            <label class="cn-filter-label"><i class="bi bi-search me-1"></i>Keyword</label>
+            <input type="text" name="q" class="form-control form-control-sm" placeholder="City, college..." value="{{ filters.q }}">
+          </div>
+          <!-- City -->
+          <div class="mb-3">
+            <label class="cn-filter-label"><i class="bi bi-geo-alt me-1"></i>City</label>
+            <select name="city" class="form-select form-select-sm">
+              <option value="">All Cities</option>
+              {% for c in cities %}
+              <option value="{{ c }}" {% if filters.city == c %}selected{% endif %}>{{ c }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <!-- Room Type -->
+          <div class="mb-3">
+            <label class="cn-filter-label"><i class="bi bi-door-open me-1"></i>Room Type</label>
+            <select name="room_type" class="form-select form-select-sm">
+              <option value="">All Types</option>
+              {% for rt in room_types %}
+              <option value="{{ rt }}" {% if filters.room_type == rt %}selected{% endif %}>{{ rt }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <!-- Rent -->
+          <div class="mb-3">
+            <label class="cn-filter-label"><i class="bi bi-currency-rupee me-1"></i>Budget (₹/month)</label>
+            <div class="row g-1">
+              <div class="col-6"><input type="number" name="min_rent" class="form-control form-control-sm" placeholder="Min" value="{{ filters.min_rent }}" min="0"></div>
+              <div class="col-6"><input type="number" name="max_rent" class="form-control form-control-sm" placeholder="Max" value="{{ filters.max_rent }}" min="0"></div>
+            </div>
+          </div>
+          <!-- Availability -->
+          <div class="mb-3">
+            <label class="cn-filter-label"><i class="bi bi-calendar-check me-1"></i>Availability</label>
+            <select name="availability" class="form-select form-select-sm">
+              <option value="">Any</option>
+              <option value="available" {% if filters.availability == 'available' %}selected{% endif %}>Available Now</option>
+              <option value="unavailable" {% if filters.availability == 'unavailable' %}selected{% endif %}>Currently Occupied</option>
+            </select>
+          </div>
+          <!-- Amenities -->
+          <div class="mb-3">
+            <label class="cn-filter-label"><i class="bi bi-stars me-1"></i>Amenities</label>
+            {% for am in amenity_list %}
+            <div class="form-check mb-1">
+              <input class="form-check-input" type="checkbox" name="amenities" value="{{ am }}" id="am_{{ forloop.counter }}"
+                     {% if am in filters.amenities %}checked{% endif %}>
+              <label class="form-check-label" for="am_{{ forloop.counter }}">{{ am }}</label>
+            </div>
+            {% endfor %}
+          </div>
+          <!-- Sort -->
+          <div class="mb-3">
+            <label class="cn-filter-label"><i class="bi bi-arrow-down-up me-1"></i>Sort By</label>
+            <select name="sort" class="form-select form-select-sm">
+              <option value="newest" {% if filters.sort == 'newest' %}selected{% endif %}>Newest First</option>
+              <option value="oldest" {% if filters.sort == 'oldest' %}selected{% endif %}>Oldest First</option>
+              <option value="rent_low" {% if filters.sort == 'rent_low' %}selected{% endif %}>Rent: Low to High</option>
+              <option value="rent_high" {% if filters.sort == 'rent_high' %}selected{% endif %}>Rent: High to Low</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-filter-apply w-100 py-2">
+            <i class="bi bi-search me-1"></i>Apply Filters
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- PROPERTY GRID -->
+    <div class="col-lg-9">
+      {% if properties %}
+      <div class="row g-4" id="propertyResultsGrid">
+        {% for prop in properties %}
+        <div class="col-sm-6 col-xl-4 fade-in">
+          {% include 'properties/partials/property_card.html' with prop=prop %}
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="cn-empty-state" id="propertyResultsGrid">
+        <i class="bi bi-house-x"></i>
+        <h5>No Properties Found</h5>
+        <p>Try adjusting your filters or search terms.</p>
+        <a href="{% url 'properties:find_rooms' %}" class="btn btn-primary mt-2">Clear Filters</a>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const form = document.getElementById('filterForm');
+  if (!form) return;
+
+  const inputs = form.querySelectorAll('select, input[type="checkbox"]');
+  inputs.forEach(input => {
+    input.addEventListener('change', () => {
+      form.submit();
+    });
+  });
+});
+</script>
+{% endblock %}

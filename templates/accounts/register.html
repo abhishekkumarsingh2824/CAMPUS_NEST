@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% block title %}Register — CampusNest{% endblock %}
+
+{% block content %}
+<div class="cn-page-header">
+  <div class="container text-center">
+    <h1>Create Your Account</h1>
+    <p>Join thousands of students and owners on CampusNest</p>
+  </div>
+</div>
+
+<div class="container py-5">
+  <div class="cn-form-card" style="max-width:580px;">
+    <h2 class="cn-form-title">Sign Up</h2>
+    <p class="cn-form-subtitle">Already have an account? <a href="{% url 'accounts:login' %}">Login here</a></p>
+
+    <form method="POST" novalidate>
+      {% csrf_token %}
+
+      <!-- Role Selection -->
+      <div class="mb-4">
+        <label class="cn-filter-label mb-2">I am a...</label>
+        <div class="d-flex gap-3">
+          <div class="flex-fill">
+            <input type="radio" class="btn-check" name="role" id="roleStudent" value="student"
+                   {% if not form_data.role or form_data.role == 'student' %}checked{% endif %}>
+            <label class="btn btn-outline-primary w-100" for="roleStudent">
+              <i class="bi bi-mortarboard me-2"></i>Student
+            </label>
+          </div>
+          <div class="flex-fill">
+            <input type="radio" class="btn-check" name="role" id="roleOwner" value="owner"
+                   {% if form_data.role == 'owner' %}checked{% endif %}>
+            <label class="btn btn-outline-primary w-100" for="roleOwner">
+              <i class="bi bi-house me-2"></i>Property Owner
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Full Name *</label>
+        <input type="text" name="full_name" class="form-control" value="{{ form_data.full_name|default:'' }}" required autocomplete="name">
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Email Address *</label>
+        <input type="email" name="email" class="form-control" value="{{ form_data.email|default:'' }}" required autocomplete="email">
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Mobile Number</label>
+        <input type="tel" name="phone" class="form-control" value="{{ form_data.phone|default:'' }}" placeholder="10-digit mobile number" pattern="[6-9][0-9]{9}">
+      </div>
+      <div class="mb-3" id="collegeField">
+        <label class="form-label">College / University</label>
+        <input type="text" name="college" class="form-control" value="{{ form_data.college|default:'' }}" placeholder="Your college name">
+      </div>
+      <div class="mb-3">
+        <label class="form-label">City</label>
+        <input type="text" name="city" class="form-control" value="{{ form_data.city|default:'' }}" placeholder="Your city">
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Password *</label>
+        <div class="input-group">
+          <input type="password" name="password" id="regPassword" class="form-control" required minlength="8" autocomplete="new-password">
+          <button class="btn btn-outline-secondary" type="button" id="toggleRegPwd"><i class="bi bi-eye"></i></button>
+        </div>
+        <div class="form-text">Minimum 8 characters</div>
+      </div>
+      <div class="mb-4">
+        <label class="form-label">Confirm Password *</label>
+        <input type="password" name="confirm_password" class="form-control" required autocomplete="new-password">
+      </div>
+
+      <button type="submit" class="btn btn-primary w-100 btn-lg">
+        <i class="bi bi-person-plus me-2"></i>Create Account
+      </button>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.getElementById('toggleRegPwd')?.addEventListener('click', () => {
+  const pwd = document.getElementById('regPassword');
+  const icon = document.querySelector('#toggleRegPwd i');
+  if (pwd.type === 'password') { pwd.type = 'text'; icon.className = 'bi bi-eye-slash'; }
+  else { pwd.type = 'password'; icon.className = 'bi bi-eye'; }
+});
+</script>
+{% endblock %}

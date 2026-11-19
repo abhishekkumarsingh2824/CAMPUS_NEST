@@ -1,0 +1,163 @@
+{% extends 'base.html' %}
+{% block title %}Admin Dashboard — CampusNest{% endblock %}
+
+{% block content %}
+<div class="cn-page-header" style="background:linear-gradient(135deg,#7F1D1D,#DC2626);">
+  <div class="container">
+    <h1><i class="bi bi-shield-lock me-2"></i>Admin Dashboard</h1>
+    <p>Platform moderation and management</p>
+  </div>
+</div>
+
+<div class="container py-4">
+  <!-- Stats -->
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-md-2">
+      <div class="cn-dash-stat text-center">
+        <div class="stat-icon icon-primary mx-auto"><i class="bi bi-people-fill"></i></div>
+        <div class="stat-number">{{ stats.total_users }}</div>
+        <div class="stat-label">Users</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-2">
+      <div class="cn-dash-stat text-center">
+        <div class="stat-icon icon-success mx-auto"><i class="bi bi-mortarboard-fill"></i></div>
+        <div class="stat-number">{{ stats.total_students }}</div>
+        <div class="stat-label">Students</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-2">
+      <div class="cn-dash-stat text-center">
+        <div class="stat-icon icon-warning mx-auto"><i class="bi bi-house-fill"></i></div>
+        <div class="stat-number">{{ stats.total_owners }}</div>
+        <div class="stat-label">Owners</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-2">
+      <div class="cn-dash-stat text-center">
+        <div class="stat-icon icon-primary mx-auto"><i class="bi bi-buildings-fill"></i></div>
+        <div class="stat-number">{{ stats.total_properties }}</div>
+        <div class="stat-label">Properties</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-2">
+      <div class="cn-dash-stat text-center">
+        <div class="stat-icon icon-warning mx-auto"><i class="bi bi-clock-fill"></i></div>
+        <div class="stat-number">{{ stats.pending_properties }}</div>
+        <div class="stat-label">Pending</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-2">
+      <div class="cn-dash-stat text-center">
+        <div class="stat-icon icon-success mx-auto"><i class="bi bi-check-circle-fill"></i></div>
+        <div class="stat-number">{{ stats.approved_properties }}</div>
+        <div class="stat-label">Approved</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PENDING PROPERTIES -->
+  <h5 class="fw-bold mb-3 text-danger"><i class="bi bi-exclamation-triangle-fill me-2"></i>Pending Approval ({{ pending_properties|length }})</h5>
+  {% if pending_properties %}
+  <div class="cn-info-card mb-4">
+    <div class="table-responsive">
+      <table class="cn-table">
+        <thead><tr><th>Property</th><th>Owner ID</th><th>City</th><th>Rent</th><th>Submitted</th><th>Actions</th></tr></thead>
+        <tbody>
+          {% for prop in pending_properties %}
+          <tr>
+            <td>
+              <a href="{% url 'properties:property_detail' property_id=prop.id %}" class="fw-semibold" style="font-size:.85rem;">
+                {{ prop.title|truncatechars:35 }}
+              </a><br>
+              <small class="text-muted">{{ prop.room_type }}</small>
+            </td>
+            <td><small class="text-muted">{{ prop.owner_id|truncatechars:12 }}</small></td>
+            <td>{{ prop.city }}</td>
+            <td>₹{{ prop.monthly_rent }}</td>
+            <td style="font-size:.8rem;">{{ prop.created_at|date:"d M Y" }}</td>
+            <td>
+              <div class="d-flex gap-1">
+                <form method="POST" action="{% url 'core:admin_approve_property' property_id=prop.id %}">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-sm btn-success"><i class="bi bi-check-lg me-1"></i>Approve</button>
+                </form>
+                <form method="POST" action="{% url 'core:admin_reject_property' property_id=prop.id %}">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-x-lg me-1"></i>Reject</button>
+                </form>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% else %}
+  <div class="alert alert-success"><i class="bi bi-check-circle me-2"></i>No pending properties. All caught up!</div>
+  {% endif %}
+
+  <!-- ALL PROPERTIES -->
+  <h5 class="fw-bold mb-3"><i class="bi bi-buildings me-2"></i>All Properties</h5>
+  <div class="cn-info-card mb-4">
+    <div class="table-responsive">
+      <table class="cn-table">
+        <thead><tr><th>Title</th><th>City</th><th>Type</th><th>Rent</th><th>Approval</th><th>Available</th></tr></thead>
+        <tbody>
+          {% for prop in all_properties %}
+          <tr>
+            <td><a href="{% url 'properties:property_detail' property_id=prop.id %}" style="font-size:.85rem;">{{ prop.title|truncatechars:30 }}</a></td>
+            <td>{{ prop.city }}</td>
+            <td>{{ prop.room_type }}</td>
+            <td>₹{{ prop.monthly_rent }}</td>
+            <td><span class="cn-status-badge badge-{{ prop.approval_status }}">{{ prop.approval_status|title }}</span></td>
+            <td>
+              <span class="cn-status-badge {% if prop.availability_status %}badge-approved{% else %}badge-rejected{% endif %}">
+                {% if prop.availability_status %}Yes{% else %}No{% endif %}
+              </span>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ALL USERS -->
+  <h5 class="fw-bold mb-3"><i class="bi bi-people me-2"></i>All Users</h5>
+  <div class="cn-info-card mb-4">
+    <div class="table-responsive">
+      <table class="cn-table">
+        <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Phone</th><th>Joined</th><th>Action</th></tr></thead>
+        <tbody>
+          {% for u in all_users %}
+          <tr>
+            <td class="fw-semibold" style="font-size:.85rem;">{{ u.full_name }}</td>
+            <td style="font-size:.82rem;">{{ u.email }}</td>
+            <td>
+              <span class="cn-status-badge {% if u.role == 'admin' %}badge-rejected{% elif u.role == 'owner' %}badge-approved{% else %}badge-pending{% endif %}">
+                {{ u.role|title }}
+              </span>
+            </td>
+            <td style="font-size:.82rem;">{{ u.phone|default:"-" }}</td>
+            <td style="font-size:.8rem;">{{ u.created_at|date:"d M Y" }}</td>
+            <td>
+              {% if u.role != 'admin' %}
+              <form method="POST" action="{% url 'core:admin_delete_user' user_id=u.id %}"
+                    onsubmit="return confirm('Delete {{ u.full_name }}? This cannot be undone.')">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-xs btn-outline-danger" style="padding:.2rem .5rem;font-size:.75rem;">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </form>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

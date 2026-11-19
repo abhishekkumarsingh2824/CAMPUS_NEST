@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% block title %}About Us — CampusNest{% endblock %}
+
+{% block content %}
+<div class="cn-page-header">
+  <div class="container text-center">
+    <h1>About CampusNest</h1>
+    <p>India's trusted student accommodation platform</p>
+  </div>
+</div>
+
+<div class="container py-5">
+  <div class="row g-5 align-items-center mb-5">
+    <div class="col-lg-6">
+      <div class="cn-badge-pill mb-3">Our Story</div>
+      <h2 class="cn-section-title">Making Student Housing Stress-Free</h2>
+      <p class="text-muted mt-3">CampusNest was founded with a simple mission: to make finding student accommodation as easy and transparent as possible. We understand the challenges students face when relocating for college — new city, tight budget, and the pressure of academic life.</p>
+      <p class="text-muted">Our platform connects thousands of students with verified property owners, offering a safe, transparent, and convenient way to find your home away from home.</p>
+      <div class="row g-3 mt-2">
+        <div class="col-6">
+          <div class="cn-dash-stat p-3">
+            <div class="stat-number">50+</div>
+            <div class="stat-label">Cities Covered</div>
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="cn-dash-stat p-3">
+            <div class="stat-number">10K+</div>
+            <div class="stat-label">Happy Students</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <div class="p-5 text-center" style="background:var(--cn-bg-light);border-radius:24px;">
+        <i class="bi bi-buildings-fill text-primary" style="font-size:8rem;"></i>
+      </div>
+    </div>
+  </div>
+
+  <!-- Values -->
+  <div class="text-center mb-4">
+    <div class="cn-badge-pill">Our Values</div>
+    <h2 class="cn-section-title">What We Stand For</h2>
+  </div>
+  <div class="row g-4 mb-5">
+    {% for item in "Trust,Affordability,Safety,Transparency"|split:"," %}
+    <div class="col-md-3">
+      <div class="cn-dash-stat text-center p-4">
+        <div class="stat-icon icon-primary mx-auto mb-3" style="width:56px;height:56px;border-radius:14px;">
+          <i class="bi bi-{% if forloop.counter == 1 %}shield-check{% elif forloop.counter == 2 %}currency-rupee{% elif forloop.counter == 3 %}lock{% else %}eye{% endif %}"></i>
+        </div>
+        <h6 class="fw-bold">{{ item }}</h6>
+        <p class="text-muted small mb-0">
+          {% if forloop.counter == 1 %}All listings verified by our admin team.
+          {% elif forloop.counter == 2 %}Budget-friendly options for every student.
+          {% elif forloop.counter == 3 %}Secure platform with safe transactions.
+          {% else %}No hidden charges or surprise terms.{% endif %}
+        </p>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

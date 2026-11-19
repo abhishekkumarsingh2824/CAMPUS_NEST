@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% block title %}Contact Us — CampusNest{% endblock %}
+
+{% block content %}
+<div class="cn-page-header">
+  <div class="container text-center">
+    <h1>Contact Us</h1>
+    <p>We'd love to hear from you</p>
+  </div>
+</div>
+
+<div class="container py-5">
+  <div class="row g-5">
+    <div class="col-lg-5">
+      <h3 class="fw-bold mb-4">Get in Touch</h3>
+      <div class="d-flex gap-3 mb-4">
+        <div class="stat-icon icon-primary" style="width:48px;height:48px;border-radius:12px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.2rem;">
+          <i class="bi bi-envelope-fill text-primary"></i>
+        </div>
+        <div>
+          <h6 class="fw-bold mb-1">Email</h6>
+          <p class="text-muted small mb-0">hello@campusnest.in</p>
+        </div>
+      </div>
+      <div class="d-flex gap-3 mb-4">
+        <div class="stat-icon icon-success" style="width:48px;height:48px;border-radius:12px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.2rem;">
+          <i class="bi bi-telephone-fill text-success"></i>
+        </div>
+        <div>
+          <h6 class="fw-bold mb-1">Phone</h6>
+          <p class="text-muted small mb-0">+91 98765 43210</p>
+        </div>
+      </div>
+      <div class="d-flex gap-3 mb-4">
+        <div class="stat-icon icon-warning" style="width:48px;height:48px;border-radius:12px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.2rem;">
+          <i class="bi bi-geo-alt-fill" style="color:var(--cn-warning);"></i>
+        </div>
+        <div>
+          <h6 class="fw-bold mb-1">Office</h6>
+          <p class="text-muted small mb-0">Hinjewadi IT Park, Pune, Maharashtra 411057</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-7">
+      <div class="cn-info-card">
+        <h4 class="fw-bold mb-4">Send a Message</h4>
+        <form method="POST" novalidate>
+          {% csrf_token %}
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">Your Name *</label>
+              <input type="text" name="name" class="form-control" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Email Address *</label>
+              <input type="email" name="email" class="form-control" required>
+            </div>
+            <div class="col-12">
+              <label class="form-label">Subject</label>
+              <input type="text" name="subject" class="form-control">
+            </div>
+            <div class="col-12">
+              <label class="form-label">Message *</label>
+              <textarea name="message" class="form-control" rows="5" required></textarea>
+            </div>
+            <div class="col-12">
+              <button type="submit" class="btn btn-primary btn-lg">
+                <i class="bi bi-send me-2"></i>Send Message
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

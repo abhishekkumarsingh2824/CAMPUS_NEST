@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% block title %}My Dashboard — CampusNest{% endblock %}
+
+{% block content %}
+<div class="cn-page-header">
+  <div class="container">
+    <h1><i class="bi bi-person-circle me-2"></i>My Dashboard</h1>
+    <p>Welcome back, {{ user.full_name }}!</p>
+  </div>
+</div>
+
+<div class="container py-4">
+  <!-- Quick Links -->
+  <div class="d-flex gap-2 flex-wrap mb-4">
+    <a href="{% url 'properties:find_rooms' %}" class="btn btn-primary"><i class="bi bi-search me-1"></i>Find Rooms</a>
+    <a href="{% url 'favorites:my_favorites' %}" class="btn btn-outline-primary"><i class="bi bi-heart me-1"></i>Saved ({{ fav_properties|length }})</a>
+    <a href="{% url 'inquiries:my_inquiries' %}" class="btn btn-outline-primary"><i class="bi bi-chat me-1"></i>My Inquiries</a>
+    <a href="{% url 'accounts:edit_profile' %}" class="btn btn-outline-secondary"><i class="bi bi-gear me-1"></i>Edit Profile</a>
+  </div>
+
+  <div class="row g-4">
+    <!-- Profile Card -->
+    <div class="col-lg-3">
+      <div class="cn-info-card text-center">
+        <div class="mb-3" style="width:80px;height:80px;border-radius:50%;background:var(--cn-bg-light);display:flex;align-items:center;justify-content:center;margin:0 auto;">
+          <i class="bi bi-person-fill text-primary" style="font-size:2.5rem;"></i>
+        </div>
+        <h5 class="fw-bold mb-1">{{ user.full_name }}</h5>
+        <span class="cn-status-badge badge-approved">Student</span>
+        <hr>
+        <ul class="list-unstyled text-start mt-2" style="font-size:.85rem;">
+          <li class="mb-1"><i class="bi bi-envelope text-primary me-2"></i>{{ user.email }}</li>
+          {% if user.phone %}<li class="mb-1"><i class="bi bi-telephone text-primary me-2"></i>{{ user.phone }}</li>{% endif %}
+          {% if user.college %}<li class="mb-1"><i class="bi bi-mortarboard text-primary me-2"></i>{{ user.college }}</li>{% endif %}
+          {% if user.city %}<li class="mb-1"><i class="bi bi-geo-alt text-primary me-2"></i>{{ user.city }}</li>{% endif %}
+        </ul>
+        <a href="{% url 'accounts:edit_profile' %}" class="btn btn-sm btn-outline-primary w-100 mt-2">Edit Profile</a>
+      </div>
+    </div>
+
+    <div class="col-lg-9">
+      <!-- Saved Properties -->
+      <h5 class="fw-bold mb-3"><i class="bi bi-heart-fill text-danger me-2"></i>Saved Properties</h5>
+      {% if fav_properties %}
+      <div class="row g-3 mb-4">
+        {% for prop in fav_properties|slice:":3" %}
+        <div class="col-sm-4">{% include 'properties/partials/property_card.html' with prop=prop %}</div>
+        {% endfor %}
+      </div>
+      <a href="{% url 'favorites:my_favorites' %}" class="btn btn-sm btn-outline-primary mb-4">View All Saved</a>
+      {% else %}
+      <div class="cn-empty-state mb-4" style="padding:2rem;">
+        <i class="bi bi-heart" style="font-size:2rem;color:#CBD5E1;"></i>
+        <p class="mt-2 mb-0">No saved properties yet. <a href="{% url 'properties:find_rooms' %}">Explore rooms</a></p>
+      </div>
+      {% endif %}
+
+      <!-- Recent Inquiries -->
+      <h5 class="fw-bold mb-3"><i class="bi bi-chat-dots-fill text-primary me-2"></i>Recent Inquiries</h5>
+      {% if inquiries %}
+      <div class="cn-info-card">
+        <div class="table-responsive">
+          <table class="cn-table">
+            <thead><tr>
+              <th>Property</th><th>Message</th><th>Status</th><th>Date</th>
+            </tr></thead>
+            <tbody>
+              {% for inq in inquiries %}
+              <tr>
+                <td>
+                  {% if inq.property %}
+                  <a href="{% url 'properties:property_detail' property_id=inq.property.id %}" class="fw-semibold" style="font-size:.85rem;">
+                    {{ inq.property.title|truncatechars:30 }}
+                  </a><br>
+                  <small class="text-muted">{{ inq.property.city }}</small>
+                  {% else %}<span class="text-muted">Deleted</span>{% endif %}
+                </td>
+                <td style="font-size:.83rem;max-width:200px;">{{ inq.message|truncatechars:60 }}</td>
+                <td>
+                  <span class="cn-status-badge {% if inq.status == 'responded' %}badge-approved{% elif inq.status == 'closed' %}badge-inactive{% else %}badge-pending{% endif %}">
+                    {{ inq.status|title }}
+                  </span>
+                </td>
+                <td style="font-size:.8rem;white-space:nowrap;">{{ inq.created_at|date:"d M Y" }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <a href="{% url 'inquiries:my_inquiries' %}" class="btn btn-sm btn-outline-primary mt-3">View All Inquiries</a>
+      {% else %}
+      <div class="cn-empty-state" style="padding:2rem;">
+        <i class="bi bi-chat-x" style="font-size:2rem;color:#CBD5E1;"></i>
+        <p class="mt-2 mb-0">No inquiries yet. Find a room and send your first inquiry!</p>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

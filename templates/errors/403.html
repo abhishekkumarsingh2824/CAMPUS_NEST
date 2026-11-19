@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block title %}403 — Forbidden{% endblock %}
+{% block content %}
+<div class="container py-5 text-center cn-empty-state" style="min-height:50vh;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+  <i class="bi bi-shield-x" style="font-size:5rem;color:#DC2626;"></i>
+  <h1 class="display-4 fw-800 mt-3" style="font-weight:800;">403</h1>
+  <h3 class="fw-bold">Access Forbidden</h3>
+  <p class="text-muted">You don't have permission to access this page.</p>
+  <a href="{% url 'core:home' %}" class="btn btn-primary mt-2">Go to Home</a>
+</div>
+{% endblock %}

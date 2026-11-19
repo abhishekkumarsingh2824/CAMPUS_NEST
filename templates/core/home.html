@@ -1,0 +1,321 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}CampusNest — Find Your Perfect Student Home{% endblock %}
+
+{% block content %}
+
+<!-- HERO -->
+<section class="cn-hero">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-lg-7">
+        <div class="cn-badge-pill mb-3" style="background:rgba(255,255,255,.1);color:#93C5FD;">
+          <i class="bi bi-mortarboard-fill me-1"></i> #1 Student Accommodation near Lovely Professional University
+        </div>
+        <h1 class="cn-hero-title">
+          Find Rooms Near <span class="text-primary">LPU Campus</span>
+        </h1>
+        <p class="cn-hero-subtitle mt-3">
+          Discover affordable rooms, PGs, flats, and hostels around Law Gate, Chiheru, Phagwara & Jalandhar (within 10-15 km of LPU).
+        </p>
+
+        <!-- MAKEMYTRIP / BOOKING.COM / TRIVAGO STYLE CATEGORY TABS -->
+        <div class="cn-hero-category-tabs d-flex flex-wrap gap-2 mb-3">
+          <a href="{% url 'properties:find_rooms' %}?room_type=Single+Room" class="cn-tab-item active">
+            <i class="bi bi-door-closed-fill"></i>
+            <span>Single Rooms</span>
+          </a>
+          <a href="{% url 'properties:find_rooms' %}?room_type=PG" class="cn-tab-item">
+            <i class="bi bi-buildings-fill"></i>
+            <span>PG & Mess</span>
+          </a>
+          <a href="{% url 'properties:find_rooms' %}?room_type=Shared+Room" class="cn-tab-item">
+            <i class="bi bi-people-fill"></i>
+            <span>Shared Flats</span>
+          </a>
+          <a href="{% url 'properties:find_rooms' %}?room_type=Hostel" class="cn-tab-item">
+            <i class="bi bi-house-door-fill"></i>
+            <span>Hostels</span>
+          </a>
+          <a href="{% url 'properties:find_rooms' %}?room_type=1BHK" class="cn-tab-item">
+            <i class="bi bi-key-fill"></i>
+            <span>1BHK / Studio</span>
+          </a>
+        </div>
+
+        <!-- SEARCH PANEL -->
+        <div class="cn-search-panel">
+          <form method="GET" action="{% url 'properties:find_rooms' %}" id="heroSearchForm">
+            <div class="row g-2">
+              <div class="col-md-4">
+                <div class="input-group">
+                  <span class="input-group-text bg-transparent border-end-0 text-primary ps-3">
+                    <i class="bi bi-geo-alt-fill fs-5"></i>
+                  </span>
+                  <input type="text" name="q" class="form-control border-start-0 ps-1" placeholder="Where? (Law Gate, Chiheru...)" value="{{ request.GET.q }}">
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="input-group">
+                  <span class="input-group-text bg-transparent border-end-0 text-primary ps-3">
+                    <i class="bi bi-building-check fs-5"></i>
+                  </span>
+                  <select name="room_type" class="form-select border-start-0 ps-1">
+                    <option value="">Any Room Type</option>
+                    <option value="Single Room">Single Room</option>
+                    <option value="Shared Room">Shared Room</option>
+                    <option value="PG">PG</option>
+                    <option value="Hostel">Hostel</option>
+                    <option value="Studio Apartment">Studio Apartment</option>
+                    <option value="1BHK">1BHK</option>
+                    <option value="2BHK">2BHK</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="input-group">
+                  <span class="input-group-text bg-transparent border-end-0 text-primary ps-3">
+                    <i class="bi bi-currency-rupee fs-5"></i>
+                  </span>
+                  <input type="number" name="max_rent" class="form-control border-start-0 ps-1" placeholder="Max Budget" min="0">
+                </div>
+              </div>
+              <div class="col-md-2">
+                <button type="submit" class="cn-search-btn">
+                  <i class="bi bi-search me-1"></i> Search
+                </button>
+              </div>
+            </div>
+          </form>
+          <div class="d-flex gap-3 mt-3 flex-wrap align-items-center">
+            <small class="text-muted"><i class="bi bi-fire text-danger me-1"></i>Trending near LPU: 
+              <a href="{% url 'properties:find_rooms' %}?q=Law+Gate" class="text-primary fw-semibold"><i class="bi bi-pin-map-fill me-1"></i>Law Gate</a>, 
+              <a href="{% url 'properties:find_rooms' %}?q=Chiheru" class="text-primary fw-semibold"><i class="bi bi-pin-map-fill me-1"></i>Chiheru</a>, 
+              <a href="{% url 'properties:find_rooms' %}?city=Phagwara" class="text-primary fw-semibold"><i class="bi bi-pin-map-fill me-1"></i>Phagwara</a>, 
+              <a href="{% url 'properties:find_rooms' %}?city=Jalandhar" class="text-primary fw-semibold"><i class="bi bi-pin-map-fill me-1"></i>Jalandhar</a>
+            </small>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-5 d-none d-lg-flex flex-column justify-content-center align-items-end gap-3">
+        <!-- Floating Travel Card 1 (Law Gate) -->
+        <div class="cn-hero-float-card d-flex align-items-center gap-3 bg-white shadow-lg border" style="width: 320px; border-radius:18px;">
+          <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=150&q=80" 
+               alt="Law Gate Resort Style Stays" style="width: 68px; height: 68px; border-radius: 12px; object-fit: cover;">
+          <div>
+            <div class="d-flex align-items-center gap-1">
+              <span class="badge bg-primary" style="font-size:0.65rem;">Trending</span>
+              <small class="text-warning"><i class="bi bi-star-fill"></i> 4.9</small>
+            </div>
+            <strong style="font-size: 0.95rem; color:#0F172A;">Law Gate Luxury Stays</strong>
+            <div class="text-muted small" style="font-size:0.75rem;"><i class="bi bi-geo-alt text-primary"></i> 2 min from LPU</div>
+          </div>
+        </div>
+
+        <!-- Floating Travel Card 2 (Chiheru PG with pool/balcony vibes) -->
+        <div class="cn-hero-float-card d-flex align-items-center gap-3 bg-white shadow-lg border" style="width: 340px; margin-right: 25px; border-radius:18px;">
+          <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=150&q=80" 
+               alt="Chiheru Student Villas" style="width: 68px; height: 68px; border-radius: 12px; object-fit: cover;">
+          <div>
+            <div class="d-flex align-items-center gap-1">
+              <span class="badge bg-success" style="font-size:0.65rem;">Verified</span>
+              <small class="text-warning"><i class="bi bi-star-fill"></i> 4.8</small>
+            </div>
+            <strong style="font-size: 0.95rem; color:#0F172A;">Chiheru Modern Living</strong>
+            <div class="text-muted small" style="font-size:0.75rem;"><i class="bi bi-cup-hot text-primary"></i> Meals + WiFi Included</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section class="cn-stats">
+  <div class="container">
+    <div class="row g-4 text-center">
+      <div class="col-6 col-md-3 cn-stat-item">
+        <div class="cn-stat-number">{{ stats.total_properties }}+</div>
+        <div class="cn-stat-label">Listed Properties</div>
+      </div>
+      <div class="col-6 col-md-3 cn-stat-item">
+        <div class="cn-stat-number">{{ stats.total_cities }}+</div>
+        <div class="cn-stat-label">Cities Covered</div>
+      </div>
+      <div class="col-6 col-md-3 cn-stat-item">
+        <div class="cn-stat-number">{{ stats.total_users }}+</div>
+        <div class="cn-stat-label">Happy Students</div>
+      </div>
+      <div class="col-6 col-md-3 cn-stat-item">
+        <div class="cn-stat-number">100%</div>
+        <div class="cn-stat-label">Verified Listings</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- POPULAR PLACES / LOCALITIES (MAKEMYTRIP STYLE PHOTO TILES) -->
+<section class="py-5" style="background: var(--cn-card-bg);">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-end mb-4">
+      <div>
+        <div class="cn-badge-pill mb-2"><i class="bi bi-compass-fill me-1"></i>Explore Top Localities</div>
+        <h2 class="cn-section-title mb-1">Stay Near LPU Within 10–15 KM</h2>
+        <p class="text-muted small mb-0">Popular student hubs with direct transport and lively campus culture</p>
+      </div>
+      <a href="{% url 'properties:find_rooms' %}" class="btn btn-sm btn-outline-primary d-none d-md-inline-flex align-items-center gap-1">
+        Explore All <i class="bi bi-arrow-right"></i>
+      </a>
+    </div>
+
+    <div class="row g-3">
+      <!-- Law Gate -->
+      <div class="col-6 col-md-3">
+        <a href="{% url 'properties:find_rooms' %}?q=Law+Gate" class="text-decoration-none">
+          <div class="position-relative overflow-hidden shadow-sm" style="border-radius: 16px; height: 180px;">
+            <img src="https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&w=400&q=80" 
+                 alt="Law Gate" class="w-100 h-100" style="object-fit:cover; transition: transform 0.4s ease;">
+            <div class="position-absolute bottom-0 start-0 end-0 p-3" style="background: linear-gradient(to top, rgba(0,0,0,0.85), transparent); color:#fff;">
+              <h6 class="fw-bold mb-0">Law Gate</h6>
+              <small class="text-warning" style="font-size:0.75rem;"><i class="bi bi-geo-alt-fill"></i> 0–2 min from Campus</small>
+            </div>
+          </div>
+        </a>
+      </div>
+
+      <!-- Chiheru -->
+      <div class="col-6 col-md-3">
+        <a href="{% url 'properties:find_rooms' %}?q=Chiheru" class="text-decoration-none">
+          <div class="position-relative overflow-hidden shadow-sm" style="border-radius: 16px; height: 180px;">
+            <img src="https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&w=400&q=80" 
+                 alt="Chiheru" class="w-100 h-100" style="object-fit:cover; transition: transform 0.4s ease;">
+            <div class="position-absolute bottom-0 start-0 end-0 p-3" style="background: linear-gradient(to top, rgba(0,0,0,0.85), transparent); color:#fff;">
+              <h6 class="fw-bold mb-0">Chiheru</h6>
+              <small class="text-info" style="font-size:0.75rem;"><i class="bi bi-bus-front"></i> 1.5 KM | Peaceful PGs</small>
+            </div>
+          </div>
+        </a>
+      </div>
+
+      <!-- Phagwara -->
+      <div class="col-6 col-md-3">
+        <a href="{% url 'properties:find_rooms' %}?city=Phagwara" class="text-decoration-none">
+          <div class="position-relative overflow-hidden shadow-sm" style="border-radius: 16px; height: 180px;">
+            <img src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=400&q=80" 
+                 alt="Phagwara City" class="w-100 h-100" style="object-fit:cover; transition: transform 0.4s ease;">
+            <div class="position-absolute bottom-0 start-0 end-0 p-3" style="background: linear-gradient(to top, rgba(0,0,0,0.85), transparent); color:#fff;">
+              <h6 class="fw-bold mb-0">Phagwara</h6>
+              <small class="text-warning" style="font-size:0.75rem;"><i class="bi bi-shop"></i> Model Town & Cafes</small>
+            </div>
+          </div>
+        </a>
+      </div>
+
+      <!-- Jalandhar -->
+      <div class="col-6 col-md-3">
+        <a href="{% url 'properties:find_rooms' %}?city=Jalandhar" class="text-decoration-none">
+          <div class="position-relative overflow-hidden shadow-sm" style="border-radius: 16px; height: 180px;">
+            <img src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=400&q=80" 
+                 alt="Jalandhar Rama Mandi" class="w-100 h-100" style="object-fit:cover; transition: transform 0.4s ease;">
+            <div class="position-absolute bottom-0 start-0 end-0 p-3" style="background: linear-gradient(to top, rgba(0,0,0,0.85), transparent); color:#fff;">
+              <h6 class="fw-bold mb-0">Jalandhar</h6>
+              <small class="text-info" style="font-size:0.75rem;"><i class="bi bi-buildings"></i> Rama Mandi & Cantt</small>
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURED PROPERTIES -->
+<section class="cn-section">
+  <div class="container">
+    <div class="text-center mb-4">
+      <div class="cn-badge-pill">Featured Listings</div>
+      <h2 class="cn-section-title">Latest Available Rooms</h2>
+      <p class="cn-section-subtitle">Hand-picked accommodations near LPU (Law Gate, Chiheru, Phagwara & Jalandhar)</p>
+    </div>
+
+    {% if featured_properties %}
+    <div class="row g-4">
+      {% for prop in featured_properties %}
+      <div class="col-sm-6 col-lg-4 fade-in">
+        {% include 'properties/partials/property_card.html' with prop=prop %}
+      </div>
+      {% endfor %}
+    </div>
+    <div class="text-center mt-4">
+      <a href="{% url 'properties:find_rooms' %}" class="btn btn-primary btn-lg">
+        <i class="bi bi-search me-2"></i>View All Properties
+      </a>
+    </div>
+    {% else %}
+    <div class="cn-empty-state">
+      <i class="bi bi-house-x"></i>
+      <h5>No listings yet</h5>
+      <p>Be the first to list a property on CampusNest!</p>
+      {% if is_owner %}
+      <a href="{% url 'properties:add_property' %}" class="btn btn-primary">List Your Property</a>
+      {% else %}
+      <a href="{% url 'accounts:register' %}" class="btn btn-primary">Register as Owner</a>
+      {% endif %}
+    </div>
+    {% endif %}
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="cn-section" style="background:var(--cn-bg-light);">
+  <div class="container">
+    <div class="text-center mb-4">
+      <div class="cn-badge-pill">How It Works</div>
+      <h2 class="cn-section-title">Find a Room in 3 Simple Steps</h2>
+    </div>
+    <div class="row g-4">
+      <div class="col-md-4 text-center">
+        <div class="cn-dash-stat h-100 p-4">
+          <div class="stat-icon icon-primary mx-auto mb-3" style="width:60px;height:60px;border-radius:16px;font-size:1.8rem;">
+            <i class="bi bi-search"></i>
+          </div>
+          <h5 class="fw-bold">1. Search</h5>
+          <p class="text-muted small">Enter your city, college, or budget to find the perfect accommodation.</p>
+        </div>
+      </div>
+      <div class="col-md-4 text-center">
+        <div class="cn-dash-stat h-100 p-4">
+          <div class="stat-icon icon-success mx-auto mb-3" style="width:60px;height:60px;border-radius:16px;font-size:1.8rem;">
+            <i class="bi bi-eye"></i>
+          </div>
+          <h5 class="fw-bold">2. Compare</h5>
+          <p class="text-muted small">View detailed photos, amenities, pricing, and read student reviews.</p>
+        </div>
+      </div>
+      <div class="col-md-4 text-center">
+        <div class="cn-dash-stat h-100 p-4">
+          <div class="stat-icon icon-warning mx-auto mb-3" style="width:60px;height:60px;border-radius:16px;font-size:1.8rem;">
+            <i class="bi bi-chat-dots"></i>
+          </div>
+          <h5 class="fw-bold">3. Connect</h5>
+          <p class="text-muted small">Send an inquiry directly to the owner and book your new home!</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cn-section">
+  <div class="container">
+    <div class="text-center p-5" style="background:linear-gradient(135deg,#1E3A8A,#2563EB);border-radius:24px;color:#fff;">
+      <h2 class="fw-800" style="font-weight:800;">Are You a Property Owner?</h2>
+      <p style="color:#BFDBFE;" class="mb-4">List your property on CampusNest and connect with thousands of students looking for accommodation.</p>
+      <a href="{% url 'accounts:register' %}" class="btn btn-lg" style="background:#fff;color:var(--cn-primary);font-weight:700;">
+        <i class="bi bi-plus-circle me-2"></i>List Your Property Free
+      </a>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% block title %}Manage Inquiries — CampusNest{% endblock %}
+
+{% block content %}
+<div class="cn-page-header">
+  <div class="container">
+    <h1><i class="bi bi-inbox me-2"></i>Manage Inquiries</h1>
+    <p>Respond to student inquiries for your properties</p>
+  </div>
+</div>
+<div class="container py-4">
+  <!-- Filter -->
+  <div class="d-flex gap-2 mb-4 flex-wrap">
+    <a href="{% url 'inquiries:owner_inquiries' %}" class="btn btn-sm {% if not status_filter %}btn-primary{% else %}btn-outline-primary{% endif %}">All</a>
+    <a href="?status=pending" class="btn btn-sm {% if status_filter == 'pending' %}btn-warning{% else %}btn-outline-warning{% endif %}">Pending</a>
+    <a href="?status=responded" class="btn btn-sm {% if status_filter == 'responded' %}btn-success{% else %}btn-outline-success{% endif %}">Responded</a>
+    <a href="?status=closed" class="btn btn-sm {% if status_filter == 'closed' %}btn-secondary{% else %}btn-outline-secondary{% endif %}">Closed</a>
+  </div>
+
+  {% if inquiries %}
+  <div class="row g-3">
+    {% for inq in inquiries %}
+    <div class="col-12">
+      <div class="cn-info-card">
+        <div class="row align-items-start g-3">
+          <div class="col-md-8">
+            <div class="d-flex align-items-center gap-2 mb-2">
+              <div style="width:36px;height:36px;border-radius:50%;background:var(--cn-bg-light);display:flex;align-items:center;justify-content:center;">
+                <i class="bi bi-person-fill text-primary"></i>
+              </div>
+              <div>
+                <strong style="font-size:.9rem;">{% if inq.student %}{{ inq.student.full_name }}{% else %}Unknown{% endif %}</strong><br>
+                <small class="text-muted">{% if inq.student %}{{ inq.student.email }}{% if inq.student.phone %} · {{ inq.student.phone }}{% endif %}{% endif %}</small>
+              </div>
+              <span class="cn-status-badge ms-2 {% if inq.status == 'responded' %}badge-approved{% elif inq.status == 'closed' %}badge-inactive{% else %}badge-pending{% endif %}">
+                {{ inq.status|title }}
+              </span>
+            </div>
+            {% if inq.property %}
+            <p class="mb-1" style="font-size:.83rem;"><i class="bi bi-house text-primary me-1"></i>
+              <a href="{% url 'properties:property_detail' property_id=inq.property.id %}">{{ inq.property.title }}</a>
+            </p>
+            {% endif %}
+            <div class="p-3 rounded mt-2" style="background:var(--cn-bg-light);font-size:.88rem;">
+              {{ inq.message }}
+            </div>
+            <small class="text-muted">{{ inq.created_at|date:"d M Y, g:i A" }}</small>
+          </div>
+          <div class="col-md-4">
+            <form method="POST" action="{% url 'inquiries:update_status' inquiry_id=inq.id %}">
+              {% csrf_token %}
+              <label class="form-label fw-semibold small">Update Status</label>
+              <div class="d-flex gap-2">
+                <select name="status" class="form-select form-select-sm">
+                  <option value="pending" {% if inq.status == 'pending' %}selected{% endif %}>Pending</option>
+                  <option value="responded" {% if inq.status == 'responded' %}selected{% endif %}>Responded</option>
+                  <option value="closed" {% if inq.status == 'closed' %}selected{% endif %}>Closed</option>
+                </select>
+                <button type="submit" class="btn btn-sm btn-primary">Update</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="cn-empty-state">
+    <i class="bi bi-inbox"></i>
+    <h5>No Inquiries{% if status_filter %} ({{ status_filter|title }}){% endif %}</h5>
+    <p>Inquiries from interested students will appear here.</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

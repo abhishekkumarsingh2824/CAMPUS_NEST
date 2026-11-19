@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block title %}My Favorites — CampusNest{% endblock %}
+
+{% block content %}
+<div class="cn-page-header">
+  <div class="container">
+    <h1><i class="bi bi-heart-fill me-2"></i>Saved Properties</h1>
+    <p>Your bookmarked accommodations</p>
+  </div>
+</div>
+<div class="container py-4">
+  {% if properties %}
+  <div class="row g-4">
+    {% for prop in properties %}
+    <div class="col-sm-6 col-lg-4 fade-in">
+      {% include 'properties/partials/property_card.html' with prop=prop %}
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="cn-empty-state">
+    <i class="bi bi-heart"></i>
+    <h5>No Saved Properties</h5>
+    <p>Start exploring and save properties you like!</p>
+    <a href="{% url 'properties:find_rooms' %}" class="btn btn-primary">Find Rooms</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

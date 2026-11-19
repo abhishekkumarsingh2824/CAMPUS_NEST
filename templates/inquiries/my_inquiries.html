@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block title %}My Inquiries — CampusNest{% endblock %}
+
+{% block content %}
+<div class="cn-page-header">
+  <div class="container">
+    <h1><i class="bi bi-chat-dots me-2"></i>My Inquiries</h1>
+    <p>Track your rental inquiry status</p>
+  </div>
+</div>
+<div class="container py-4">
+  {% if inquiries %}
+  <div class="cn-info-card">
+    <div class="table-responsive">
+      <table class="cn-table">
+        <thead><tr>
+          <th>Property</th><th>Location</th><th>Message</th><th>Status</th><th>Date</th>
+        </tr></thead>
+        <tbody>
+          {% for inq in inquiries %}
+          <tr>
+            <td>
+              {% if inq.property %}
+              <a href="{% url 'properties:property_detail' property_id=inq.property.id %}" class="fw-semibold">
+                {{ inq.property.title|truncatechars:30 }}
+              </a>
+              {% else %}<span class="text-muted">Listing Deleted</span>{% endif %}
+            </td>
+            <td class="text-muted" style="font-size:.83rem;">{% if inq.property %}{{ inq.property.city }}{% endif %}</td>
+            <td style="font-size:.83rem;max-width:200px;">{{ inq.message|truncatechars:70 }}</td>
+            <td>
+              <span class="cn-status-badge {% if inq.status == 'responded' %}badge-approved{% elif inq.status == 'closed' %}badge-inactive{% else %}badge-pending{% endif %}">
+                {{ inq.status|title }}
+              </span>
+            </td>
+            <td style="font-size:.8rem;white-space:nowrap;">{{ inq.created_at|date:"d M Y" }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% else %}
+  <div class="cn-empty-state">
+    <i class="bi bi-chat-x"></i>
+    <h5>No Inquiries Yet</h5>
+    <p>Browse properties and send your first inquiry!</p>
+    <a href="{% url 'properties:find_rooms' %}" class="btn btn-primary">Find Rooms</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
